@@ -11,26 +11,27 @@ class CreditStatsWidget extends BaseWidget
 {
     protected function getStats(): array
     {
-        $totalCredit = Customer::sum('credit_balance') ?? 0;
+        $totalCredit = Customer::sum('current_credit') ?? 0;
+        $totalUsedCredit = CreditTransaction::where('type', 'debit')->sum('amount') ?? 0;
         $totalCustomers = Customer::whereHas('creditTransactions')->count();
         $totalTransactions = CreditTransaction::count();
         $monthlyTransactions = CreditTransaction::where('created_at', '>=', now()->startOfMonth())->count();
 
         return [
-            Stat::make('ยอดเครดิตรวม', number_format($totalCredit, 2) . ' ฿')
-                ->description('ยอดคงเหลือทั้งหมดในระบบ')
+            Stat::make('ยอดเครดิตคงเหลือ', number_format($totalCredit, 2) . ' ฿')
+                ->description('ยอดคงเหลือปัจจุบันทั้งหมด')
                 ->color('primary')
                 ->icon('heroicon-o-currency-dollar'),
+
+            Stat::make('ยอดเครดิตที่ใช้', number_format($totalUsedCredit, 2) . ' ฿')
+                ->description('จากการสร้างตั๋วประกัน')
+                ->color('danger')
+                ->icon('heroicon-o-arrow-down-circle'),
 
             Stat::make('ลูกค้าทั้งหมด', number_format($totalCustomers))
                 ->description('ที่มีประวัติเครดิต')
                 ->color('success')
                 ->icon('heroicon-o-user-group'),
-
-            Stat::make('รายการทั้งหมด', number_format($totalTransactions))
-                ->description('ตั้งแต่เริ่มใช้งานระบบ')
-                ->color('info')
-                ->icon('heroicon-o-document-text'),
 
             Stat::make('รายการเดือนนี้', number_format($monthlyTransactions))
                 ->description('ณ วันที่ ' . now()->format('d/m/Y'))

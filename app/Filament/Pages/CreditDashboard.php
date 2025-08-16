@@ -7,7 +7,6 @@ use App\Models\CreditTransaction;
 use App\Filament\Widgets\CreditStatsWidget;
 use App\Filament\Widgets\AlertsWidget;
 use App\Filament\Widgets\RecentTransactionsWidget;
-use App\Filament\Widgets\DetailedActivityLogsWidget;
 use Filament\Pages\Page;
 
 class CreditDashboard extends Page
@@ -32,7 +31,6 @@ class CreditDashboard extends Page
     {
         return [
             RecentTransactionsWidget::class,
-            DetailedActivityLogsWidget::class,
         ];
     }
 
@@ -44,7 +42,7 @@ class CreditDashboard extends Page
     // ใช้ getViewData สำหรับส่งข้อมูลไปยัง default template
     protected function getViewData(): array
     {
-        $totalCredit = Customer::sum('credit_balance') ?? 0;
+        $totalCredit = Customer::sum('current_credit') ?? 0;
         $totalCustomers = Customer::whereHas('creditTransactions')->count();
         $totalTransactions = CreditTransaction::count();
         $monthlyTransactions = CreditTransaction::where('created_at', '>=', now()->startOfMonth())->count();

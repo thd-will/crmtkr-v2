@@ -263,7 +263,35 @@ class PolicyTicket extends Model
 
     public function getRemainingAmount(): float
     {
-        return $this->total_amount - ($this->paid_amount ?? 0);
+        $totalPaid = $this->payments()
+            ->where('status', 'confirmed')
+            ->sum('amount');
+        
+        return max(0, $this->total_amount - $totalPaid);
+    }
+
+    public function getTotalPaidAmount(): float
+    {
+        return $this->payments()
+            ->where('status', 'confirmed') 
+            ->sum('amount');
+    }
+
+    public function updatePaymentStatus(): void
+    {
+        $totalPaid = $this->getTotalPaidAmount();
+        
+        if ($totalPaid == 0) {
+            $this->payment_status = 'pending';
+        } elseif ($totalPaid >= $this->total_amount) {
+            $this->payment_status = 'paid';
+            $this->paid_at = now();
+        } else {
+            $this->payment_status = 'partial';
+        }
+        
+        $this->paid_amount = $totalPaid;
+        $this->save();
     }
 
     public function canRefundCredit(): bool
@@ -277,5 +305,13 @@ class PolicyTicket extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * ความสัมพันธ์กับธุรกรรมเครดิต
+     */
+    public function creditTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class);
     }
 }

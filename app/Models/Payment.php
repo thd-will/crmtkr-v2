@@ -23,6 +23,23 @@ class Payment extends Model
         'payment_date' => 'date',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($payment) {
+            $payment->policyTicket?->updatePaymentStatus();
+        });
+
+        static::updated(function ($payment) {
+            if ($payment->wasChanged('amount') || $payment->wasChanged('status')) {
+                $payment->policyTicket?->updatePaymentStatus();
+            }
+        });
+
+        static::deleted(function ($payment) {
+            $payment->policyTicket?->updatePaymentStatus();
+        });
+    }
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
