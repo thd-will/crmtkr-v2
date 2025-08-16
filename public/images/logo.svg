@@ -1,0 +1,19 @@
+<svg width="140" height="45" viewBox="0 0 140 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="22" cy="22" r="20" fill="url(#gradient)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  
+  <!-- TKR Letters -->
+  <text x="22" y="28" font-family="Kanit, Arial, sans-serif" font-weight="bold" font-size="14" fill="white" text-anchor="middle">TKR</text>
+  
+  <!-- Thai Company Name -->
+  <text x="50" y="18" font-family="Sarabun, Arial, sans-serif" font-weight="600" font-size="12" fill="#667eea">ประกันภัย</text>
+  <text x="50" y="32" font-family="Sarabun, Arial, sans-serif" font-weight="600" font-size="12" fill="#764ba2">CRM System</text>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,172 @@
+/* Import Thai Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600;700&display=swap');
+
+/* Modern CRM Theme - Thai Font Support */
+* {
+    font-family: 'Sarabun', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Alternative fonts for specific elements */
+h1, h2, h3, h4, h5, h6, .fi-header-heading {
+    font-family: 'Kanit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-weight: 600;
+}
+
+.fi-sidebar-nav-item-label {
+    font-family: 'Sarabun', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-weight: 500;
+}
+
+/* Thai text rendering optimization */
+body {
+    font-feature-settings: "liga" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+/* Sidebar Modern Look */
+.fi-sidebar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.fi-sidebar-nav {
+    padding: 1rem;
+}
+
+.fi-sidebar-nav-item {
+    margin-bottom: 0.25rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.fi-sidebar-nav-item:hover {
+    transform: translateX(4px);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.fi-sidebar-nav-item.fi-active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Top Bar Glass Effect */
+.fi-topbar {
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Content Area */
+.fi-main {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 20px 0 0 0;
+    backdrop-filter: blur(10px);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+/* Cards & Panels Modern Look */
+.fi-section-content,
+.fi-table,
+.fi-form-section {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+}
+
+/* Buttons Modern Style */
+.fi-btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.fi-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+}
+
+/* Forms Modern Look */
+.fi-input,
+.fi-select,
+.fi-textarea {
+    border-radius: 12px;
+    border: 2px solid rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
+}
+
+.fi-input:focus,
+.fi-select:focus,
+.fi-textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+    outline: none;
+}
+
+/* Tables Modern Look */
+.fi-table-row:hover {
+    background: rgba(102, 126, 234, 0.05);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+/* Brand Logo Area */
+.fi-sidebar-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 0 0 20px 20px;
+    margin-bottom: 1rem;
+    font-family: 'Kanit', sans-serif !important;
+    font-weight: 600;
+}
+
+/* Thai text in forms and inputs */
+.fi-input,
+.fi-select,
+.fi-textarea,
+.fi-table,
+input,
+select,
+textarea {
+    font-family: 'Sarabun', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-weight: 400;
+}
+
+/* Dark Mode Adjustments */
+.dark body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    font-family: 'Sarabun', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+.dark .fi-sidebar {
+    background: rgba(30, 30, 50, 0.95) !important;
+}
+
+.dark .fi-main {
+    background: rgba(20, 20, 35, 0.9);
+}
+
+.dark .fi-section-content,
+.dark .fi-table,
+.dark .fi-form-section {
+    background: rgba(40, 40, 60, 0.9);
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    font-family: 'Kanit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
