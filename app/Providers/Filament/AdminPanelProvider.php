@@ -38,7 +38,8 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'warning' => Color::Orange,
             ])
-            ->brandLogo(asset('images/logo.svg'))
+            ->brandName('TKR CRM')
+            ->brandLogo(asset('favicon.svg'))
             ->brandLogoHeight('2.5rem')
             ->darkMode(true)
             ->favicon(asset('favicon.svg'))
