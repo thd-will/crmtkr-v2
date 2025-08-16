@@ -52,7 +52,6 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Pages\FinancialReport::class,
                 \App\Filament\Pages\PendingPayments::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 \App\Filament\Widgets\StatsOverview::class,
                 \App\Filament\Widgets\CustomersChart::class,

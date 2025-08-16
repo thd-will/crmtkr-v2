@@ -48,12 +48,9 @@ class AlertsWidget extends BaseWidget
                 ->color('info');
         }
 
-        // ถ้าไม่มี alert ใดๆ แสดงว่าระบบปกติ
+        // ถ้าไม่มี alert ใดๆ ไม่แสดงอะไรเลย (return empty array)
         if (empty($alerts)) {
-            $alerts[] = Stat::make('ระบบปกติ', '✓')
-                ->description('ไม่มีรายการที่ต้องแจ้งเตือน')
-                ->descriptionIcon('heroicon-m-check-circle')
-                ->color('success');
+            return [];
         }
 
         return $alerts;
