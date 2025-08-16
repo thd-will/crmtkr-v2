@@ -2,8 +2,17 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ฟอร์มเจ้าหน้าที่ - {{ $ticket->ticket_number }}</title>
+    <meta name="viewport" content="width=device-width, initial-sc                <!-- Internal Notes Section -->
+                @if($ticket->tipaya_notes)
+                <div class="border-t pt-4">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">บันทึกถึงเจ้าหน้าที่ทิพยประกันภัย:</label>
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+                            <p class="text-gray-800 text-sm whitespace-pre-line">{{ $ticket->tipaya_notes }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endiftitle>ฟอร์มเจ้าหน้าที่ - {{ $ticket->ticket_number }}</title>
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -130,15 +139,19 @@
                     @endif
                 </div>
 
-                <!-- Notes Section -->
+                <!-- Internal Notes Section -->
                 @if($ticket->tipaya_notes)
                 <div class="border-t pt-4">
+                    <h4 class="text-md font-medium text-gray-900 mb-3">� หมายเหตุจากทิพยประกันภัย</h4>
+                    
+                    @if($ticket->tipaya_notes)
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">บันทึกถึงเจ้าหน้าที่ทิพยประกันภัย:</label>
                         <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
                             <p class="text-gray-800 text-sm whitespace-pre-line">{{ $ticket->tipaya_notes }}</p>
                         </div>
                     </div>
+                    @endif
                 </div>
                 @endif
 

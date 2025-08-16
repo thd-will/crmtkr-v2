@@ -113,11 +113,21 @@ class PolicyTicketsTable
                     ->toggleable(),
 
                 IconColumn::make('staff_file_path')
-                    ->label('ไฟล์แนบ')
+                    ->label('ไฟล์จากทิพย์')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-document-arrow-down')
+                    ->falseIcon('')
+                    ->trueColor('success')
+                    ->tooltip(fn ($record) => $record->staff_file_path ? 'มีไฟล์แนบจากเจ้าหน้าที่ทิพย์' : 'ยังไม่มีไฟล์แนบ')
+                    ->toggleable(),
+
+                IconColumn::make('request_file_path')
+                    ->label('ไฟล์จากลูกค้า')
                     ->boolean()
                     ->trueIcon('heroicon-o-paper-clip')
                     ->falseIcon('')
                     ->trueColor('info')
+                    ->tooltip(fn ($record) => $record->request_file_path ? 'มีไฟล์แนบจากลูกค้า' : 'ยังไม่มีไฟล์แนบ')
                     ->toggleable(),
             ])
             ->filters([
@@ -190,6 +200,14 @@ class PolicyTicketsTable
                     ->url(fn ($record) => $record->request_file_path ? asset('storage/' . $record->request_file_path) : null)
                     ->openUrlInNewTab()
                     ->visible(fn ($record) => !empty($record->request_file_path)),
+                Action::make('download_staff_file')
+                    ->label('ดาวน์โหลดไฟล์ทิพย์')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->url(fn ($record) => $record->staff_file_path ? asset('storage/' . $record->staff_file_path) : null)
+                    ->openUrlInNewTab()
+                    ->visible(fn ($record) => !empty($record->staff_file_path))
+                    ->tooltip('ดาวน์โหลดไฟล์จากเจ้าหน้าที่ทิพย์'),
                 Action::make('download_policy')
                     ->label('ดาวน์โหลดกรมธรรม์')
                     ->icon('heroicon-o-arrow-down-tray')

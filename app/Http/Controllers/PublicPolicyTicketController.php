@@ -185,7 +185,7 @@ class PublicPolicyTicketController extends Controller
     /**
      * ตรวจสอบ access code สำหรับเจ้าหน้าที่
      */
-    public function verifyStaffAccess(Request $request, $ticket_number): View|JsonResponse
+    public function verifyStaffAccess(Request $request, $ticket_number)
     {
         $request->validate([
             'access_code' => 'required|string|min:6',
@@ -256,7 +256,8 @@ class PublicPolicyTicketController extends Controller
     public function staffVerifyWithCode($ticketNumber, $accessCode)
     {
         // ตรวจสอบว่า ticket และ access code ตรงกัน
-        $ticket = PolicyTicket::where('ticket_number', $ticketNumber)
+        $ticket = PolicyTicket::with(['customer', 'payments'])
+            ->where('ticket_number', $ticketNumber)
             ->where('access_code', $accessCode)
             ->first();
 
@@ -266,9 +267,7 @@ class PublicPolicyTicketController extends Controller
             ]);
         }
 
-        // Redirect ไปยังหน้า staff form พร้อมกับ access code
-        return redirect()->route('public.ticket.staff-form', $ticketNumber)
-            ->with('pre_filled_access_code', $accessCode)
-            ->with('success', 'ยืนยันรหัสเข้าถึงเรียบร้อย กรุณากรอกข้อมูลเจ้าหน้าที่');
+        // แสดงหน้าฟอร์มเจ้าหน้าที่ทันที
+        return view('public.policy-ticket.staff-form', compact('ticket'));
     }
 }
