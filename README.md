@@ -7,19 +7,156 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+# TKR CRM System v2
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+โระบบ CRM สำหรับการจัดการลูกค้าและตั๋วประกันภัยของบริษัททิพยประกันภัย พัฒนาด้วย Laravel และ Filament
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 📋 การจัดการ Policy Tickets
+- ✅ ระบบ CRUD ครบครัน พร้อมการจัดระเบียบแบบ 5 sections
+- ✅ แบ่งข้อมูลอย่างชัดเจนระหว่างข้อมูลลูกค้าและข้อมูลจากทิพย
+- ✅ สร้าง URL สาธารณะสำหรับลูกค้า และ URL สำหรับพนักงาน
+- ✅ ระบบแนบไฟล์ที่รองรับ PDF, DOC, DOCX, ZIP ขนาดสูงสุด 300MB
+- ✅ ดาวน์โหลดและดูไฟล์แนบได้โดยตรง
+
+### 👥 การจัดการลูกค้า
+- ✅ ระบบข้อมูลลูกค้าแบบละเอียด พร้อมหมายเหตุภาษาไทย
+- ✅ ติดตาม Follow-up และกิจกรรมต่างๆ
+- ✅ Dashboard สำหรับวิเคราะห์ข้อมูลลูกค้า
+
+### 💰 การจัดการการเงิน
+- ✅ ระบบชำระเงินและเครดิตธุรกรรม
+- ✅ รายงานการเงินและสถิติ
+- ✅ เป้าหมายการขายและการติดตาม
+
+### 🔐 ระบบผู้ใช้งาน
+- ✅ การจัดการสิทธิ์และบทบาทต่างๆ
+- ✅ ระบบ Authentication และ Authorization
+- ✅ Activity Logging ครบครัน
+
+## 🛠 Technical Stack
+
+- **Backend**: Laravel 12.24.0
+- **Admin Panel**: Filament v4.0
+- **Database**: SQLite (สามารถเปลี่ยนเป็น MySQL/PostgreSQL ได้)
+- **File Storage**: Laravel Storage System
+- **UI**: Modern Responsive Design with Thai language support
+
+## 📦 Installation
+
+### Prerequisites
+- PHP >= 8.2
+- Composer
+- Node.js และ npm
+
+### Setup Steps
+
+1. Clone repository
+```bash
+git clone https://github.com/thd-will/crmtkr-v2.git
+cd crmtkr-v2
+```
+
+2. Install dependencies
+```bash
+composer install
+npm install
+```
+
+3. Environment setup
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. Database setup
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+5. Build assets
+```bash
+npm run build
+```
+
+6. Start development server
+```bash
+php artisan serve
+```
+
+## 🎯 Usage
+
+### Admin Panel
+เข้าใช้งานที่: `http://localhost:8000/admin`
+
+Login credentials (หลังจาก seed):
+- Email: admin@example.com
+- Password: password
+
+### Public URLs
+- Customer verification: `/ticket/{ticket_number}`
+- Staff verification: `/ticket/{ticket_number}/staff`
+
+## 📁 Project Structure
+
+```
+app/
+├── Filament/
+│   ├── Resources/
+│   │   ├── PolicyTickets/     # ระบบจัดการตั๋วประกัน
+│   │   ├── Customers/         # ระบบจัดการลูกค้า
+│   │   ├── Payments/          # ระบบการเงิน
+│   │   └── ...
+│   └── Widgets/               # Dashboard widgets
+├── Http/Controllers/
+├── Models/
+└── ...
+```
+
+## 🎨 Key Features Details
+
+### Policy Ticket Sections
+1. **📄 ข้อมูลคำขอประกันภัย** - ข้อมูลพื้นฐานและรายละเอียดกรมธรรม์
+2. **🏢 ข้อมูลจากทิพยประกันภัย** - ข้อมูลที่เจ้าหน้าที่ทิพยกรอก
+3. **⚙️ ข้อมูลระบบ** - การตั้งค่าระบบและ URL
+4. **💰 ข้อมูลการชำระเงิน** - สถานะและรายละเอียดการชำระเงิน
+5. **📋 การจัดการงาน** - ความสำคัญ วันครบกำหนด และการติดตาม
+
+### File Management
+- รองรับไฟล์ประเภท: PDF, DOC, DOCX, ZIP
+- แยกโฟลเดอร์: policy-requests/ สำหรับลูกค้า, staff-files/ สำหรับเจ้าหน้าที่
+- ขนาดสูงสุด: 300MB สำหรับไฟล์ลูกค้า, 10MB สำหรับไฟล์เจ้าหน้าที่
+- ฟีเจอร์: ดาวน์โหลด, ดูไฟล์, ลบไฟล์
+
+## 📈 Future Enhancements
+
+- [ ] API สำหรับ Mobile App
+- [ ] ระบบแจ้งเตือนแบบ Real-time
+- [ ] ระบบรายงานที่ซับซ้อนมากขึ้น
+- [ ] Integration กับระบบภายนอก
+- [ ] Multi-tenant support
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+สำหรับการสนับสนุนหรือคำถาม กรุณาติดต่อทีมพัฒนา
+
+---
+
+**Built with ❤️ for Tipaya Insurance**
 
 ## Learning Laravel
 
