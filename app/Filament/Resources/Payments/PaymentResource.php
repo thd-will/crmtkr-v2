@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -108,6 +109,20 @@ class PaymentResource extends Resource
                     ->label('หมายเลขอ้างอิง')
                     ->placeholder('เลขที่โอน, เลขเช็ค ฯลฯ'),
                 
+                FileUpload::make('attachments')
+                    ->label('แนบสลิปการโอน / เอกสาร')
+                    ->image()
+                    ->acceptedFileTypes(['image/*', 'application/pdf'])
+                    ->multiple()
+                    ->maxFiles(5)
+                    ->maxSize(10240) // 10MB
+                    ->directory('payment-slips')
+                    ->visibility('private')
+                    ->downloadable()
+                    ->previewable()
+                    ->reorderable()
+                    ->helperText('สามารถแนบไฟล์รูปภาพ หรือ PDF ได้ (สูงสุด 5 ไฟล์, ไฟล์ละไม่เกิน 10MB)'),
+                
                 Textarea::make('notes')
                     ->label('หมายเหตุ')
                     ->rows(3)
@@ -154,6 +169,17 @@ class PaymentResource extends Resource
                 TextColumn::make('reference_number')
                     ->label('หมายเลขอ้างอิง')
                     ->placeholder('-'),
+                
+                TextColumn::make('attachments')
+                    ->label('ไฟล์แนบ')
+                    ->formatStateUsing(function ($state) {
+                        if (!$state || !is_array($state) || empty($state)) {
+                            return '-';
+                        }
+                        $count = count($state);
+                        return "📎 {$count} ไฟล์";
+                    })
+                    ->color('gray'),
             ])
             ->filters([
                 //

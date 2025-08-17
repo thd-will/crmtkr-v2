@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\ActivityLogs\Pages;
 
 use App\Filament\Resources\ActivityLogs\ActivityLogResource;
-use App\Filament\Widgets\ActivityTimelineWidget;
-use App\Filament\Widgets\ActivityStatsWidget;
 use Filament\Resources\Pages\ListRecords;
 
 class ListActivityLogs extends ListRecords
@@ -21,7 +19,7 @@ class ListActivityLogs extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            ActivityStatsWidget::class,
+            // No widgets for now - ActivityStatsWidget was deleted
         ];
     }
 }

@@ -16,11 +16,13 @@ class Payment extends Model
         'reference_number',
         'notes',
         'status',
+        'attachments',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'payment_date' => 'date',
+        'attachments' => 'array',
     ];
 
     protected static function booted()
