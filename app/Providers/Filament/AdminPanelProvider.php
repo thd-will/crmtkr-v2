@@ -77,6 +77,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->globalSearch(false)
             ->renderHook('panels::head.end', fn () => new HtmlString('<link rel="stylesheet" href="' . asset('css/modern-theme.css') . '">'));
     }
 }

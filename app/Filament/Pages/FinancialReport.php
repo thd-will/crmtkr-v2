@@ -37,7 +37,7 @@ class FinancialReport extends Page implements HasTable
     
     protected static ?string $title = 'รายงานการเงิน';
     
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 25;
 
     // ไม่ใส่ group เพื่อให้อยู่ในเมนูหลัก
 

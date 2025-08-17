@@ -7,6 +7,9 @@ use Filament\Widgets\ChartWidget;
 
 class PolicyTicketStatusChart extends ChartWidget
 {
+    protected static ?int $sort = 3;
+    protected int|string|array $columnSpan = 1;
+    
     public function getHeading(): ?string
     {
         return 'สถานะตั๋วประกัน';
@@ -29,30 +32,33 @@ class PolicyTicketStatusChart extends ChartWidget
 
         $data = [];
         $labels = [];
-        $colors = [];
 
         foreach ($statusLabels as $status => $label) {
             $count = $statusCounts[$status] ?? 0;
-            if ($count > 0) {
-                $data[] = $count;
-                $labels[] = $label;
-                
-                // กำหนดสี
-                $colors[] = match($status) {
-                    'draft' => '#6B7280',
-                    'submitted' => '#3B82F6', 
-                    'processing' => '#F59E0B',
-                    'completed' => '#10B981',
-                    'rejected' => '#EF4444',
-                };
-            }
+            $data[] = $count;
+            $labels[] = $label;
         }
 
         return [
             'datasets' => [
                 [
+                    'label' => 'จำนวนตั๋ว',
                     'data' => $data,
-                    'backgroundColor' => $colors,
+                    'backgroundColor' => [
+                        '#6B7280', // draft - gray
+                        '#3B82F6', // submitted - blue
+                        '#F59E0B', // processing - amber
+                        '#10B981', // completed - green
+                        '#EF4444', // rejected - red
+                    ],
+                    'borderColor' => [
+                        '#4B5563',
+                        '#2563EB', 
+                        '#D97706',
+                        '#059669',
+                        '#DC2626',
+                    ],
+                    'borderWidth' => 1,
                 ],
             ],
             'labels' => $labels,
@@ -61,6 +67,6 @@ class PolicyTicketStatusChart extends ChartWidget
 
     protected function getType(): string
     {
-        return 'doughnut';
+        return 'bar';
     }
 }

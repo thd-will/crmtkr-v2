@@ -26,7 +26,7 @@ class PendingPayments extends Page implements HasTable
     
     protected static ?string $title = 'รายการค้างชำระ';
     
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 20;
 
     public function getView(): string
     {

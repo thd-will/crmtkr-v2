@@ -21,8 +21,8 @@ class ActivityLogResource extends Resource
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'บันทึกการใช้งาน';
-    protected static UnitEnum|string|null $navigationGroup = 'การจัดการเครดิต';
-    protected static ?int $navigationSort = 21;
+    protected static UnitEnum|string|null $navigationGroup = null;
+    protected static ?int $navigationSort = 90;
 
     protected static ?string $recordTitleAttribute = 'Log';
 

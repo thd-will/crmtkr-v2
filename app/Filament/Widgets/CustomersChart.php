@@ -8,6 +8,9 @@ use Illuminate\Support\Carbon;
 
 class CustomersChart extends ChartWidget
 {
+    protected static ?int $sort = 2;
+    protected int|string|array $columnSpan = 1;
+    
     public function getHeading(): ?string
     {
         return 'ลูกค้าใหม่ 7 วันที่ผ่านมา';

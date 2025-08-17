@@ -37,7 +37,7 @@ class PaymentResource extends Resource
     
     protected static ?string $pluralModelLabel = 'การชำระเงิน';
     
-    protected static ?int $navigationSort = 25;
+    protected static ?int $navigationSort = 15;
 
     public static function form(Schema $schema): Schema
     {

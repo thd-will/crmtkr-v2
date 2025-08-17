@@ -36,7 +36,7 @@ class CreditTransactionResource extends Resource
     
     protected static ?string $pluralModelLabel = 'รายการเครดิต';
     
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 35;
 
     public static function form(Schema $schema): Schema
     {

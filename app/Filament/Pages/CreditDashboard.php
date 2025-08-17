@@ -14,7 +14,7 @@ class CreditDashboard extends Page
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'แดชบอร์ดเครดิต';
     protected static ?string $title = 'แดชบอร์ดเครดิต';
-    protected static ?int $navigationSort = 19;
+    protected static ?int $navigationSort = 30;
     protected static ?string $slug = 'credit-dashboard';
 
     public function getView(): string
