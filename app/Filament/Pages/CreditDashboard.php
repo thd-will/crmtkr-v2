@@ -17,6 +17,11 @@ class CreditDashboard extends Page
     protected static ?int $navigationSort = 19;
     protected static ?string $slug = 'credit-dashboard';
 
+    public function getView(): string
+    {
+        return 'filament.pages.credit-dashboard';
+    }
+
     // ใช้ Widget แทน blade template
     
     public function getHeaderWidgets(): array

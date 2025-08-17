@@ -17,7 +17,7 @@ class AlertsWidget extends BaseWidget
         $alerts = [];
 
         // ตรวจสอบลูกค้าที่มีเครดิตต่ำ
-        $lowCreditCount = Customer::where('credit_balance', '<', 1000)->count();
+        $lowCreditCount = Customer::where('current_credit', '<', 1000)->count();
         
         if ($lowCreditCount > 0) {
             $alerts[] = Stat::make('เครดิตเหลือน้อย', $lowCreditCount . ' ราย')
@@ -26,12 +26,12 @@ class AlertsWidget extends BaseWidget
                 ->color('warning');
         }
 
-        // ตรวจสอบลูกค้าที่ใช้เครดิตเกินกำหนด  
-        $overLimitCount = Customer::whereColumn('credit_balance', '>', 'credit_limit')->count();
+        // ตรวจสอบลูกค้าที่มีเครดิตติดลบ  
+        $negativeCredit = Customer::where('current_credit', '<', 0)->count();
         
-        if ($overLimitCount > 0) {
-            $alerts[] = Stat::make('เครดิตเกินกำหนด', $overLimitCount . ' ราย')
-                ->description('ลูกค้าที่ใช้เครดิตเกินกำหนด')
+        if ($negativeCredit > 0) {
+            $alerts[] = Stat::make('เครดิตติดลบ', $negativeCredit . ' ราย')
+                ->description('ลูกค้าที่มีเครดิตติดลบ')
                 ->descriptionIcon('heroicon-m-x-circle')
                 ->color('danger');
         }

@@ -58,6 +58,9 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\PolicyTicketStatusChart::class,
                 \App\Filament\Widgets\LatestCustomers::class,
                 \App\Filament\Widgets\FinancialReportStats::class,
+                \App\Filament\Widgets\CreditStatsWidget::class,
+                \App\Filament\Widgets\AlertsWidget::class,
+                \App\Filament\Widgets\RecentTransactionsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
