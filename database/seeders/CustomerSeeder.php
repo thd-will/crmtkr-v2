@@ -174,6 +174,9 @@ class CustomerSeeder extends Seeder
         ];
 
         foreach ($customers as $customerData) {
+            // Convert arrays to JSON for database storage
+            $customerData['contact_channels'] = json_encode($customerData['contact_channels']);
+            $customerData['discounts'] = json_encode($customerData['discounts']);
             Customer::create($customerData);
         }
 
@@ -202,15 +205,15 @@ class CustomerSeeder extends Seeder
                 'phone' => $faker->phoneNumber(),
                 'line_id' => $faker->userName(),
                 'purchase_type' => $purchaseType,
-                'contact_channels' => $contactChannels,
+                'contact_channels' => json_encode($contactChannels),
                 'contact_from_customer' => 'ลูกค้าติดต่อมาสอบถามเรื่องประกันแรงงานต่างด้าว',
                 'current_credit' => $faker->randomFloat(2, 10000, 100000),
                 'days_missing' => $faker->numberBetween(0, 5),
                 'is_active' => $faker->boolean(90), // 90% จะ active
-                'discounts' => [
+                'discounts' => json_encode([
                     'MOU' => $baseMouDiscounts,
                     'มติ24' => $baseMoti24Discounts
-                ]
+                ])
             ]);
         }
     }
