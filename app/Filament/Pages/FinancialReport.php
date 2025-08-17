@@ -5,10 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\PolicyTicket;
 use App\Models\Payment;
 use App\Models\Customer;
-use App\Filament\Widgets\FinancialStatsWidget;
-use App\Filament\Widgets\MonthlyRevenueChartWidget;
-use App\Filament\Widgets\PaymentStatusChartWidget;
-use App\Filament\Widgets\TopCustomersWidget;
+use App\Filament\Widgets\FinancialReportStats;
 use Filament\Pages\Page;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,10 +13,18 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Actions\Action;
+use Filament\Support\Colors\Color;
+use Filament\Support\Enums\FontWeight;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use BackedEnum;
 
 class FinancialReport extends Page implements HasTable
@@ -36,33 +41,37 @@ class FinancialReport extends Page implements HasTable
 
     // ไม่ใส่ group เพื่อให้อยู่ในเมนูหลัก
 
+    public function getView(): string
+    {
+        return 'filament.pages.financial-report';
+    }
+
     public function getHeaderWidgets(): array
     {
         return [
-            FinancialStatsWidget::class,
+            FinancialReportStats::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int | array
+    {
+        return [
+            'sm' => 2,  // 2 cards per row on small screens
+            'lg' => 4,  // 4 cards per row on large screens
         ];
     }
 
     public function getFooterWidgets(): array
     {
         return [
-            MonthlyRevenueChartWidget::class,
-            PaymentStatusChartWidget::class,
-            TopCustomersWidget::class,
+            // ไม่มี widgets
         ];
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(
-                PolicyTicket::with(['customer', 'payments'])
-                    ->select([
-                        'policy_tickets.*',
-                        DB::raw('(SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payments.policy_ticket_id = policy_tickets.id AND payments.status = "confirmed") as paid_amount'),
-                        DB::raw('(policy_tickets.total_amount - (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payments.policy_ticket_id = policy_tickets.id AND payments.status = "confirmed")) as remaining_amount')
-                    ])
-            )
+            ->query(PolicyTicket::with(['customer']))
             ->columns([
                 TextColumn::make('ticket_number')
                     ->label('หมายเลขตั๋ว')
@@ -74,71 +83,156 @@ class FinancialReport extends Page implements HasTable
                 TextColumn::make('customer.name')
                     ->label('ลูกค้า')
                     ->searchable()
-                    ->sortable(),
-
+                    ->sortable()
+                    ->limit(30),
+                
+                TextColumn::make('customer.phone')
+                    ->label('เบอร์โทร')
+                    ->toggleable(),
+                
+                TextColumn::make('insurance_type')
+                    ->label('ประเภท')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'MOU' => 'info',
+                        'มติ24' => 'warning',
+                        default => 'gray',
+                    }),
+                
+                TextColumn::make('duration')
+                    ->label('ระยะเวลา')
+                    ->formatStateUsing(fn (string $state): string => match($state) {
+                        '3_months' => '3 เดือน',
+                        '6_months' => '6 เดือน', 
+                        '12_months' => '12 เดือน',
+                        '15_months' => '15 เดือน',
+                        default => $state,
+                    })
+                    ->toggleable(),
+                
+                TextColumn::make('person_count')
+                    ->label('จำนวนคน')
+                    ->alignCenter()
+                    ->toggleable(),
+                
                 TextColumn::make('total_amount')
-                    ->label('ยอดเรียกเก็บ')
+                    ->label('ยอดรวม')
                     ->money('THB')
-                    ->sortable()
-                    ->color('warning'),
-
+                    ->weight('bold')
+                    ->color('warning')
+                    ->sortable(),
+                
                 TextColumn::make('paid_amount')
-                    ->label('เก็บแล้ว')
+                    ->label('จ่ายแล้ว')
+                    ->getStateUsing(fn (PolicyTicket $record) => $record->paid_amount ?? 0)
                     ->money('THB')
-                    ->sortable()
                     ->color('success'),
-
+                
                 TextColumn::make('remaining_amount')
                     ->label('คงเหลือ')
+                    ->getStateUsing(fn (PolicyTicket $record) => $record->getRemainingAmount())
                     ->money('THB')
-                    ->sortable()
-                    ->color('danger')
-                    ->weight('bold'),
-
+                    ->weight('bold')
+                    ->color(fn ($state) => $state > 0 ? 'danger' : 'success'),
+                
                 BadgeColumn::make('payment_status')
-                    ->label('สถานะ')
-                    ->colors([
-                        'warning' => 'pending',
-                        'success' => 'paid', 
-                        'info' => 'partial',
-                        'danger' => 'overdue',
-                    ])
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->label('สถานะการชำระ')
+                    ->formatStateUsing(fn (string $state): string => match($state) {
                         'pending' => 'รอชำระ',
-                        'paid' => 'ชำระแล้ว',
-                        'partial' => 'ชำระบางส่วน',
+                        'partial' => 'จ่ายบางส่วน',
+                        'paid' => 'จ่ายครบ',
                         'overdue' => 'เกินกำหนด',
                         default => $state,
-                    }),
+                    })
+                    ->colors([
+                        'danger' => 'pending',
+                        'warning' => 'partial',
+                        'success' => 'paid',
+                        'danger' => 'overdue',
+                    ]),
 
+                BadgeColumn::make('status')
+                    ->label('สถานะตั๋ว')
+                    ->formatStateUsing(fn (string $state): string => match($state) {
+                        'draft' => 'ร่าง',
+                        'submitted' => 'ส่งแล้ว',
+                        'processing' => 'กำลังดำเนินการ',
+                        'completed' => 'เสร็จแล้ว',
+                        'rejected' => 'ถูกปฏิเสธ',
+                        default => $state,
+                    })
+                    ->colors([
+                        'gray' => 'draft',
+                        'warning' => 'submitted',
+                        'info' => 'processing',
+                        'success' => 'completed',
+                        'danger' => 'rejected',
+                    ])
+                    ->toggleable(),
+                
                 TextColumn::make('created_at')
-                    ->label('วันที่สร้าง')
-                    ->date('d/m/Y')
-                    ->sortable(),
+                    ->label('สร้างเมื่อ')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable()
+                    ->toggleable()
+                    ->color('gray'),
             ])
             ->filters([
                 SelectFilter::make('payment_status')
                     ->label('สถานะการชำระ')
                     ->options([
                         'pending' => 'รอชำระ',
-                        'paid' => 'ชำระแล้ว',
-                        'partial' => 'ชำระบางส่วน',
+                        'partial' => 'จ่ายบางส่วน',
+                        'paid' => 'จ่ายครบ',
                         'overdue' => 'เกินกำหนด',
                     ]),
+                
+                SelectFilter::make('insurance_type')
+                    ->label('ประเภทประกัน')
+                    ->options([
+                        'MOU' => 'MOU',
+                        'มติ24' => 'มติ24',
+                    ]),
 
+                SelectFilter::make('status')
+                    ->label('สถานะตั๋ว')
+                    ->options([
+                        'draft' => 'ร่าง',
+                        'submitted' => 'ส่งแล้ว',
+                        'processing' => 'กำลังดำเนินการ',
+                        'completed' => 'เสร็จแล้ว',
+                        'rejected' => 'ถูกปฏิเสธ',
+                    ]),
+                
                 Filter::make('high_amount')
-                    ->label('ยอดสูง (> 10,000)')
-                    ->query(fn (Builder $query): Builder => $query->where('total_amount', '>', 10000)),
+                    ->label('ยอดสูง (>10,000 บาท)')
+                    ->query(fn (Builder $query): Builder => $query->where('total_amount', '>', 10000))
+                    ->toggle(),
 
-                Filter::make('this_month')
-                    ->label('เดือนนี้')
-                    ->query(fn (Builder $query): Builder => $query->whereMonth('created_at', now()->month)
-                        ->whereYear('created_at', now()->year)),
-            ])
-            ->actions([
-                // สามารถเพิ่ม actions อื่นๆ ได้
+                Filter::make('has_outstanding')
+                    ->label('มียอดค้างชำระ')
+                    ->query(fn (Builder $query): Builder => 
+                        $query->whereRaw('total_amount > (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE payments.policy_ticket_id = policy_tickets.id AND payments.status = "confirmed")')
+                    )
+                    ->toggle(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->paginated([25, 50, 100]);
+            ->striped()
+            ->paginated([25, 50, 100])
+            ->emptyStateHeading('🔍 ไม่พบข้อมูลรายงานการเงิน')
+            ->emptyStateDescription('ยังไม่มีตั๋วประกันในระบบ หรือโหลดข้อมูลไม่สำเร็จ')
+            ->emptyStateIcon('heroicon-o-document-chart-bar')
+            ->emptyStateActions([
+                \Filament\Actions\Action::make('refresh')
+                    ->label('รีเฟรช')
+                    ->icon('heroicon-m-arrow-path')
+                    ->action(fn () => $this->resetTable())
+                    ->color('primary'),
+            ]);
+    }
+
+    public function getRefreshInterval(): ?int
+    {
+        return 30; // Refresh every 30 seconds
     }
 }
