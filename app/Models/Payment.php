@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Payment extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'customer_id',
         'policy_ticket_id',
@@ -24,6 +28,20 @@ class Payment extends Model
         'payment_date' => 'date',
         'attachments' => 'array',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['amount', 'payment_method', 'reference_number', 'status', 'payment_date'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => "สร้างการชำระเงินใหม่: {$this->amount} บาท สำหรับ {$this->customer?->name}",
+                'updated' => "แก้ไขการชำระเงิน: {$this->amount} บาท ({$this->customer?->name})",
+                'deleted' => "ลบการชำระเงิน: {$this->amount} บาท ({$this->customer?->name})",
+                default => $eventName,
+            });
+    }
 
     protected static function booted()
     {
