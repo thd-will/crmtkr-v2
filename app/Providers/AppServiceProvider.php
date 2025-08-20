@@ -26,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
         // ตั้งค่า timezone เป็น Asia/Bangkok
         date_default_timezone_set(config('app.timezone'));
         
+        // บังคับใช้ HTTPS ใน production environment
+        if (env('FORCE_HTTPS', false) || app()->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+        
         // กำหนดฟอร์แมตวันที่ไทยสำหรับ Filament
         $this->configureDateFormats();
     }
