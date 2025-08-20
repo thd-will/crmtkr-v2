@@ -108,12 +108,19 @@ class PolicyTicketForm
 
                 Select::make('duration')
                     ->label('ระยะเวลาความคุ้มครอง')
-                    ->options([
-                        '3_months' => '3 เดือน (590 บาท)',
-                        '6_months' => '6 เดือน (990 บาท)',
-                        '12_months' => '12 เดือน (1,750 บาท)',
-                        '15_months' => '15 เดือน (2,290 บาท)',
-                    ])
+                    ->options(function () {
+                        $products = \App\Models\Product::select('duration', 'duration_display', 'base_price')
+                            ->where('is_active', true)
+                            ->where('type', 'MOU') // Default to MOU, will update based on insurance_type
+                            ->orderBy('duration')
+                            ->get();
+                        
+                        $options = [];
+                        foreach ($products as $product) {
+                            $options[$product->duration] = $product->duration_display . ' (' . number_format($product->base_price) . ' บาท)';
+                        }
+                        return $options;
+                    })
                     ->required()
                     ->reactive()
                     ->afterStateUpdated(function (callable $set, callable $get, $state) {
@@ -432,22 +439,22 @@ class PolicyTicketForm
      */
     private static function calculateTotalAmount(callable $set, callable $get): void
     {
+        $insuranceType = $get('insurance_type');
         $duration = $get('duration');
         $personCount = (int) $get('person_count');
         $discountAmount = (float) $get('discount_amount');
 
-        if (!$duration || !$personCount) {
+        if (!$insuranceType || !$duration || !$personCount) {
             return;
         }
 
-        // ราคาต่อคนตามระยะเวลา
-        $pricePerPerson = match($duration) {
-            '3_months' => 590,
-            '6_months' => 990,
-            '12_months' => 1750,
-            '15_months' => 2290,
-            default => 0,
-        };
+        // ดึงราคาจากฐานข้อมูล Product
+        $product = \App\Models\Product::where('type', $insuranceType)
+            ->where('duration', $duration)
+            ->where('is_active', true)
+            ->first();
+
+        $pricePerPerson = $product ? $product->base_price : 0;
 
         // คำนวนราคารวม = (ราคาต่อคน - ส่วนลดต่อคน) × จำนวนคน
         $totalAmount = ($pricePerPerson - $discountAmount) * $personCount;

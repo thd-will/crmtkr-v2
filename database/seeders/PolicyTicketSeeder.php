@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\PolicyTicket;
 use App\Models\Customer;
 use App\Models\User;
+use App\Models\Product;
 use Illuminate\Support\Str;
 
 class PolicyTicketSeeder extends Seeder
@@ -132,21 +133,12 @@ class PolicyTicketSeeder extends Seeder
 
     private function getBasePrice(string $insuranceType, string $duration): float
     {
-        $prices = [
-            'MOU' => [
-                '3_months' => 590,
-                '6_months' => 990,
-                '12_months' => 1750,
-                '15_months' => 2290,
-            ],
-            'มติ24' => [
-                '3_months' => 590,
-                '6_months' => 990,
-                '12_months' => 1750,
-                '15_months' => 2290,
-            ]
-        ];
+        // ดึงราคาจากฐานข้อมูล Product
+        $product = \App\Models\Product::where('type', $insuranceType)
+            ->where('duration', $duration)
+            ->where('is_active', true)
+            ->first();
 
-        return $prices[$insuranceType][$duration] ?? 590;
+        return $product ? $product->base_price : 590; // fallback price
     }
 }

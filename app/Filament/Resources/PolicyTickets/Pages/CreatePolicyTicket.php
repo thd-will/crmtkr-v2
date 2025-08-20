@@ -21,19 +21,19 @@ class CreatePolicyTicket extends CreateRecord
         $data['access_code'] = \Illuminate\Support\Str::random(10);
         
         // คำนวณและตั้งค่า pricing fields ที่จำเป็น
-        if (isset($data['duration']) && isset($data['person_count'])) {
+        if (isset($data['duration']) && isset($data['person_count']) && isset($data['insurance_type'])) {
+            $insuranceType = $data['insurance_type'];
             $duration = $data['duration'];
             $personCount = (int) $data['person_count'];
             $discountAmount = (float) ($data['discount_amount'] ?? 0);
             
-            // ราคาต่อคนตามระยะเวลา
-            $pricePerPerson = match($duration) {
-                '3_months' => 590,
-                '6_months' => 990,
-                '12_months' => 1750,
-                '15_months' => 2290,
-                default => 0,
-            };
+            // ดึงราคาจากฐานข้อมูล Product
+            $product = \App\Models\Product::where('type', $insuranceType)
+                ->where('duration', $duration)
+                ->where('is_active', true)
+                ->first();
+            
+            $pricePerPerson = $product ? $product->base_price : 0;
             
             $data['base_price_per_person'] = $pricePerPerson;
             $data['discount_per_person'] = $discountAmount;
